@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniFlix - Premium Anime Streaming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff3e6c;
+            --secondary: #6c5ce7;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --accent: #00cec9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: linear-gradient(to bottom, rgba(26, 26, 46, 0.9), transparent);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            background-color: var(--darker);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            padding: 0.5rem;
+            width: 200px;
+            outline: none;
+        }
+        
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-bar button {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+        }
+        
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 5%;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+        
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 62, 108, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .section {
+            padding: 5rem 5%;
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .anime-card {
+            background-color: var(--darker);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .anime-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .anime-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .anime-card:hover::before {
+            opacity: 1;
+        }
+        
+        .anime-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .anime-info {
+            padding: 1rem;
+        }
+        
+        .anime-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .anime-info p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .watch-now-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .anime-card:hover .watch-now-btn {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .trending-section {
+            background-color: var(--darker);
+        }
+        
+        .new-releases {
+            background-color: var(--dark);
+        }
+        
+        .ongoing-section {
+            background-color: var(--darker);
+        }
+        
+        footer {
+            background-color: #0f0f1a;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-icons a {
+            color: var(--light);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">AniFlix</div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Genres</a>
+            <a href="#">New Releases</a>
+            <a href="#">Updates</a>
+            <a href="#">Ongoing</a>
+            <a href="#">Recent</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search anime...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Unlimited Anime Streaming</h1>
+            <p>Watch your favorite anime anytime, anywhere. With thousands of titles and new episodes added daily, your next anime adventure is just a click away.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">Start Watching</a>
+                <a href="#" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section trending-section">
+        <h2 class="section-title">Trending Now</h2>
+        <div class="anime-grid">
+            <div class="anime-card floating" style="animation-delay: 0.1s;">
+                <img src="https://images.unsplash.com/photo-1633613286991-611fe299c4be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="One Piece">
+                <div class="anime-info">
+                    <h3>One Piece</h3>
+                    <p>Action, Adventure</p>
+                </div>
+                <a href="#" class="btn btn-primary watch-now-btn">Watch Now</a>
+            </div>
+            <div class="anime-card floating" style="animation-delay: 0.2s;">
+                <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="The Unaware Atelier Meister">
+                <div class="anime-info">
+                    <h3>The Unaware Atelier Meister</h3>
+                    <p>Fantasy, Isekai</p>
+                </div>
+                <a href="#" class="btn btn-primary watch-now-btn">Watch Now</a>
+            </div>
+            <div class="anime-card floating" style="animation-delay: 0.3s;">
+                <img src="https://images.unsplash.com/photo-1633613287216-50f58f513883?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Lazarus">
+                <div class="anime-info">
+                    <h3>Lazarus</h3>
+                    <p>Sci-Fi, Action</p>
+                </div>
+                <a href="#" class="btn btn-primary watch-now-btn">Watch Now</a>
+            </div>
+            <div class="anime-card floating" style="animation-delay: 0.4s;">
+                <img src="https://images.unsplash.com/photo-1633613289821-8aab0b6c00b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Makina San S">
+                <div class="anime-info">
+                    <h3>Makina San S</h3>
+                    <p>Mecha, Sci-Fi</p>
+                </div>
+                <a href="#" class="btn btn-primary watch-now-btn">Watch Now</a>
+            </div>
+            <div class="anime-card floating" style="animation-delay: 0.5s;">
+                <img src="https://images.unsplash.com/photo-1633613287140-611ce0d1baf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Yandere Dark Elf She">
+                <div class="anime-info">
+                    <h3>Yandere Dark Elf She</h3>
+                    <p>Romance, Fantasy</p>
+                </div>
+                <a href="#" class="btn btn-primary watch-now-btn">Watch Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section new-releases">
+        <h2 class="section-title">New Releases</h2>
+        <div class="anime-grid">
+            <!-- More anime cards would go here -->
+        </div>
+    </section>
+
+    <section class="section ongoing-section">
+        <h2 class="section-title">Ongoing Series</h2>
+        <div class="anime-grid">
+            <!-- More anime cards would go here -->
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+            <a href="#">FAQ</a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2023 AniFlix. All rights reserved.</p>
+    </footer>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Anime card hover effects are handled with CSS
+    </script>
+</body>
+</html>

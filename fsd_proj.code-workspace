@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../fsd proj"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "fsd_proj"
+	}
+}

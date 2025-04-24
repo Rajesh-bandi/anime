@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Details | AniFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #ff3e6c;
+            --secondary: #6c5ce7;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --accent: #00cec9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Navbar styles same as similar.html */
+        
+        .anime-container {
+            padding: 6rem 5% 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .anime-header {
+            display: flex;
+
+            gap: 2rem;
+            margin-bottom: 3rem;
+            animation: slideIn 0.6s ease forwards;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .anime-poster {
+            width: 300px;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .anime-poster:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+        
+        .anime-info {
+            flex: 1;
+        }
+        
+        .anime-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .anime-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .meta-item {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .meta-score {
+            background: rgba(255, 62, 108, 0.2);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .anime-synopsis {
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .watch-btn {
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 62, 108, 0.3);
+            margin-bottom: 3rem;
+        }
+        
+        .watch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 62, 108, 0.4);
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .character-card {
+            background: var(--darker);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardAppear 0.5s ease forwards;
+            cursor: pointer;
+        }
+        
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .character-card:nth-child(1) { animation-delay: 0.1s; }
+        .character-card:nth-child(2) { animation-delay: 0.2s; }
+        /* Continue for more delay steps as needed */
+        
+        .character-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .character-info {
+            padding: 1rem;
+        }
+        
+        .character-name {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        
+        .character-role {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .seasons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .season-card {
+            background: var(--darker);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .season-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .season-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .season-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+        
+        .episode-count {
+            background: rgba(0, 206, 201, 0.2);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .episode-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .episode-card:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .episode-title {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .episode-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .anime-header {
+                flex-direction: column;
+            }
+            
+            .anime-poster {
+                width: 100%;
+                height: auto;
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">AniFlix</div>
+        <div class="nav-links">
+            <a href="similar.html">Home</a>
+            <a href="#">Genres</a>
+            <a href="#">New Releases</a>
+            <a href="#">Updates</a>
+            <a href="#">Ongoing</a>
+            <a href="#">Recent</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search anime..." id="searchInput">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+    </nav>
+
+
+    <div class="anime-container" id="animeContainer">
+        <div class="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get anime ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const animeId = urlParams.get('id');
+        
+        // DOM Elements
+        const animeContainer = document.getElementById('animeContainer');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        // API Configuration
+        const API_BASE_URL = 'https://api.jikan.moe/v4';
+        
+        // Fetch anime details
+        async function fetchAnimeDetails() {
+            if (!animeId) {
+                showError();
+                return;
+            }
+            
+            try {
+                const [detailsRes, charactersRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/anime/${animeId}/full`),
+                    fetch(`${API_BASE_URL}/anime/${animeId}/characters`)
+                ]);
+                
+                const detailsData = await detailsRes.json();
+                const charactersData = await charactersRes.json();
+                
+                if (detailsData.data) {
+                    displayAnimeDetails(detailsData.data, charactersData.data || []);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error fetching anime details:', error);
+                showError();
+            }
+        }
+        
+        // Display anime details
+        function displayAnimeDetails(anime, characters) {
+            const title = anime.title_english || anime.title || 'Unknown Title';
+            const imageUrl = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || 'https://via.placeholder.com/300x450/333/fff?text=No+Image';
+            const score = anime.score ? anime.score.toFixed(1) : 'N/A';
+            const type = anime.type || 'Unknown';
+            const episodes = anime.episodes || '?';
+            const status = anime.status || 'Unknown';
+            const synopsis = anime.synopsis || 'No synopsis available.';
+            const genres = anime.genres?.map(g => g.name) || [];
+            const year = anime.year || (anime.aired?.prop?.from?.year || '');
+            const rating = anime.rating || 'Unknown';
+            const studios = anime.studios?.map(s => s.name).join(', ') || 'Unknown';
+            
+            // Generate seasons
+            const seasons = generateSeasons(anime);
+            
+            animeContainer.innerHTML = `
+                <div class="anime-header">
+                    <img src="${imageUrl}" alt="${title}" class="anime-poster">
+                    <div class="anime-info">
+                        <h1 class="anime-title">${title}</h1>
+                        <div class="anime-meta">
+                            <span class="meta-item">${type}</span>
+                            <span class="meta-item meta-score">⭐ ${score}</span>
+                            <span class="meta-item">${episodes} Episodes</span>
+                            <span class="meta-item">${status}</span>
+                            <span class="meta-item">${year}</span>
+                            <span class="meta-item">${rating}</span>
+                            <span class="meta-item">${studios}</span>
+                        </div>
+                        <div class="detail-genres">
+                            ${genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                        </div>
+                        <p class="anime-synopsis">${synopsis}</p>
+                        <a href="watch.html?title=${encodeURIComponent(title)}&season=1&episode=1" class="watch-btn">
+                            <i class="fas fa-play"></i> Watch Now
+                        </a>
+                    </div>
+                </div>
+                
+                <h2 class="section-title">Characters</h2>
+                <div class="characters-grid" id="charactersGrid">
+                    ${characters.slice(0, 10).map((char, index) => `
+                        <div class="character-card" data-character-id="${char.character?.mal_id}" 
+                            style="animation-delay: ${(index % 10) * 0.1}s">
+                            <img src="${char.character?.images?.jpg?.image_url || 'placeholder.jpg'}" 
+                                alt="${char.character?.name}" class="character-image">
+                            <div class="character-info">
+                                <h3 class="character-name">${char.character?.name || 'Unknown'}</h3>
+                                <p class="character-role">${char.role || 'Unknown'}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${characters.length === 0 ? '<p>No character information available</p>' : ''}
+                </div>
+                
+                <h2 class="section-title">Seasons & Episodes</h2>
+                <div class="seasons-container" id="seasonsContainer">
+                    ${seasons.map(season => `
+                        <div class="season-card">
+                            <div class="season-header">
+                                <h3 class="season-title">${season.title}</h3>
+                                <span class="episode-count">${season.episodes} Episodes</span>
+                            </div>
+                            <div class="episodes-grid">
+                                ${season.episodesList.map(ep => `
+                                    <div class="episode-card">
+                                        <h4 class="episode-title">${ep.title}</h4>
+                                        <div class="episode-meta">
+                                            <span>Episode ${ep.number}</span>
+                                            <span>${ep.duration || '24'} min</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${seasons.length === 0 ? '<p>No season information available</p>' : ''}
+                </div>
+            `;
+
+            // Add click handlers after DOM is rendered
+            addCharacterCardHandlers();
+        }
+
+        function addCharacterCardHandlers() {
+            document.querySelectorAll('.character-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const characterId = card.dataset.characterId;
+                    if (characterId) {
+                        document.body.classList.add('page-transition');
+                        setTimeout(() => {
+                            window.location.href = `character.html?id=${characterId}`;
+                        }, 500);
+                    }
+                });
+            });
+        }
+        
+        // Generate mock season data
+        function generateSeasons(anime) {
+            const seasons = [];
+            const totalEpisodes = anime.episodes || 12;
+            const seasonsCount = Math.ceil(totalEpisodes / 12);
+            
+            for (let i = 1; i <= seasonsCount; i++) {
+                const seasonEpisodes = i === seasonsCount ? (totalEpisodes % 12 || 12) : 12;
+                seasons.push({
+                    title: `Season ${i}`,
+                    episodes: seasonEpisodes,
+                    episodesList: Array.from({length: seasonEpisodes}, (_, j) => ({
+                        number: j + 1,
+                        title: `Episode ${j + 1}`,
+                        duration: '24'
+                    }))
+                });
+            }
+            
+            return seasons;
+        }
+        
+        function showError() {
+            animeContainer.innerHTML = `
+                <div style="text-align: center; padding: 5rem 0;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h2>Anime Not Found</h2>
+                    <p>Couldn't load the requested anime details</p>
+                    <a href="similar.html" style="display: inline-block; margin-top: 2rem; color: var(--primary); text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Handle new searches
+        function handleSearch(query) {
+            if (query.length < 3) return;
+            document.body.classList.add('page-transition');
+            setTimeout(() => {
+                window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+            }, 500);
+        }
+        
+        // Event listeners
+        searchBtn.addEventListener('click', () => handleSearch(searchInput.value));
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch(searchInput.value);
+        });
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', fetchAnimeDetails);
+    </script>
+</body>
+</html>

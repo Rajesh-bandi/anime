@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Anime | AniFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #ff3e6c;
+            --secondary: #6c5ce7;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --accent: #00cec9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        /* Navbar styles same as before */
+        
+        .watch-container {
+            padding: 6rem 5% 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            background: #000;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .episode-selector {
+            margin-bottom: 3rem;
+        }
+        
+        .season-dropdown {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .dropdown-btn {
+            background: var(--darker);
+            color: var(--light);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 200px;
+        }
+        
+        .dropdown-btn:hover {
+            border-color: var(--primary);
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            background: var(--darker);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            display: none;
+            width: 200px;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .dropdown.active .dropdown-content {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .season-option {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .season-option:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--primary);
+        }
+        
+        .episodes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .episode-btn {
+            background: transparent;
+            color: var(--light);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .episode-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .episode-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .episode-info {
+            margin-top: 2rem;
+        }
+        
+        .episode-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .episode-description {
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 5rem 0;
+        }
+        
+        .error-message i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .episodes-container {
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">AniFlix</div>
+        <div class="nav-links">
+            <a href="similar.html">Home</a>
+            <a href="#">Genres</a>
+            <a href="#">New Releases</a>
+            <a href="#">Updates</a>
+            <a href="#">Ongoing</a>
+            <a href="#">Recent</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search anime..." id="searchInput">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+    </nav>
+
+    <div class="watch-container" id="watchContainer">
+        <div class="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        // YouTube API Key (replace with your actual API key)
+        const YOUTUBE_API_KEY = 'AIzaSyBltNkhqoteU8APMqVxmZIdAoz1SUF-Pe0';
+        
+        // Get parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const animeTitle = urlParams.get('title');
+        let currentSeason = parseInt(urlParams.get('season')) || 1;
+        let currentEpisode = parseInt(urlParams.get('episode')) || 1;
+        
+        // DOM Elements
+        const watchContainer = document.getElementById('watchContainer');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        // Fetch anime data from Jikan API
+        async function fetchAnimeDetails(title) {
+            try {
+                const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(title)}&limit=1`);
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    return data.data[0];
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching anime details:', error);
+                return null;
+            }
+        }
+        
+        // Search YouTube for anime episode
+        async function searchYouTubeVideo(query) {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(query)}&key=${YOUTUBE_API_KEY}&type=video`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    return data.items[0].id.videoId;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error searching YouTube:', error);
+                return null;
+            }
+        }
+        
+        // Generate episode query string
+        function generateEpisodeQuery(animeTitle, season, episode) {
+            return `${animeTitle} Season ${season} Episode ${episode} Official`;
+        }
+        
+        // Load episode
+        async function loadEpisode() {
+            if (!animeTitle) {
+                showError("Anime title not specified");
+                return;
+            }
+            
+            // Fetch anime details to get total episodes
+            const animeDetails = await fetchAnimeDetails(animeTitle);
+            if (!animeDetails) {
+                showError("Could not fetch anime details");
+                return;
+            }
+            
+            // Generate search query for YouTube
+            const searchQuery = generateEpisodeQuery(animeTitle, currentSeason, currentEpisode);
+            const videoId = await searchYouTubeVideo(searchQuery);
+            
+            if (!videoId) {
+                showError("Could not find episode video");
+                return;
+            }
+            
+            // Display the player and episode selector
+            displayPlayer(videoId, animeDetails);
+        }
+        
+        // Display player and episode selector
+        function displayPlayer(videoId, animeDetails) {
+            // Estimate seasons (12 episodes per season)
+            const totalEpisodes = animeDetails.episodes || 12;
+            const seasonsCount = Math.ceil(totalEpisodes / 12);
+            
+            watchContainer.innerHTML = `
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen></iframe>
+                </div>
+                
+                <div class="episode-selector">
+                    <div class="season-dropdown dropdown" id="seasonDropdown">
+                        <div class="dropdown-btn">
+                            <span>Season ${currentSeason}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            ${Array.from({length: seasonsCount}, (_, i) => i + 1).map(season => `
+                                <div class="season-option" data-season="${season}">
+                                    Season ${season}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="episodes-container" id="episodesContainer">
+                        ${Array.from({length: currentSeason === seasonsCount ? (totalEpisodes % 12 || 12) : 12}, (_, i) => i + 1).map(epNum => `
+                            <div class="episode-btn ${epNum === currentEpisode ? 'active' : ''}" 
+                                 data-episode="${epNum}">
+                                ${epNum}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="episode-info">
+                    <h2 class="episode-title">${animeTitle} - Season ${currentSeason} Episode ${currentEpisode}</h2>
+                    <p class="episode-description">Loading episode description...</p>
+                </div>
+            `;
+            
+            // Initialize dropdown functionality
+            initDropdowns();
+            // Initialize episode buttons
+            initEpisodeButtons();
+        }
+        
+        function initDropdowns() {
+            const dropdown = document.getElementById('seasonDropdown');
+            const dropdownBtn = dropdown.querySelector('.dropdown-btn');
+            
+            dropdownBtn.addEventListener('click', () => {
+                dropdown.classList.toggle('active');
+            });
+            
+            // Season selection
+            document.querySelectorAll('.season-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const seasonNum = parseInt(option.dataset.season);
+                    if (seasonNum !== currentSeason) {
+                        window.location.href = `watch.html?title=${encodeURIComponent(animeTitle)}&season=${seasonNum}&episode=1`;
+                    }
+                    dropdown.classList.remove('active');
+                });
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.dropdown')) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
+        
+        function initEpisodeButtons() {
+            document.querySelectorAll('.episode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const episodeNum = parseInt(btn.dataset.episode);
+                    if (episodeNum !== currentEpisode) {
+                        window.location.href = `watch.html?title=${encodeURIComponent(animeTitle)}&season=${currentSeason}&episode=${episodeNum}`;
+                    }
+                });
+            });
+        }
+        
+        function showError(message) {
+            watchContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>Error Loading Episode</h2>
+                    <p>${message}</p>
+                    <a href="similar.html" style="display: inline-block; margin-top: 2rem; color: var(--primary); text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Handle new searches
+        function handleSearch(query) {
+            if (query.length < 3) return;
+            document.body.classList.add('page-transition');
+            setTimeout(() => {
+                window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+            }, 500);
+        }
+        
+        // Event listeners
+        searchBtn.addEventListener('click', () => handleSearch(searchInput.value));
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch(searchInput.value);
+        });
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', loadEpisode);
+    </script>
+</body>
+</html>

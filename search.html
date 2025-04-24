@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results | AniFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #ff3e6c;
+            --secondary: #6c5ce7;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --accent: #00cec9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Keep all your existing navbar styles */
+        
+        .search-header {
+            padding: 6rem 5% 2rem;
+            text-align: center;
+        }
+        
+        .search-query {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .results-count {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.1rem;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+            padding: 0 5% 5rem;
+        }
+        
+        .result-card {
+            background: var(--darker);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            height: 350px;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: cardAppear 0.5s ease forwards;
+        }
+        
+        @keyframes cardAppear {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .result-card:nth-child(1) { animation-delay: 0.1s; }
+        .result-card:nth-child(2) { animation-delay: 0.2s; }
+        .result-card:nth-child(3) { animation-delay: 0.3s; }
+        /* Continue for more delay steps as needed */
+        
+        .result-card:hover {
+            transform: translateY(-10px) !important;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Keep all your existing card styles from similar.html */
+        
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 5rem 0;
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            color: var(--accent);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AniFlix</div>
+        <div class="nav-links">
+            <a href="similar.html">Home</a>
+            <a href="#">Genres</a>
+            <a href="#">New Releases</a>
+            <a href="#">Updates</a>
+            <a href="#">Ongoing</a>
+            <a href="#">Recent</a>
+        </div>
+        <div id="authWarning" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: #ff3e6c; color: white; padding: 15px; text-align: center; z-index: 1000;">
+            Please login to access search functionality. <a href="login.html" style="color: white; text-decoration: underline;">Login here</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search anime..." id="searchInput">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+    </nav>
+
+    <div class="search-header">
+        <h1 class="search-query" id="searchQueryDisplay">Search Results</h1>
+        <p class="results-count" id="resultsCount">0 results found</p>
+    </div>
+
+    <div class="results-grid" id="resultsGrid">
+        <!-- Results will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authToken = localStorage.getItem('authToken');
+            const authWarning = document.getElementById('authWarning');
+            
+            if (!authToken) {
+                authWarning.style.display = 'block';
+                // Disable search functionality
+                document.getElementById('searchBtn').disabled = true;
+                document.getElementById('searchInput').disabled = true;
+                document.getElementById('searchInput').placeholder = 'Please login to search';
+                
+                // Hide any results that might have loaded
+                document.getElementById('resultsGrid').style.display = 'none';
+                document.querySelector('.search-header').style.display = 'none';
+            } else {
+                // User is logged in, proceed normally
+                authWarning.style.display = 'none';
+            }
+        });
+        // Get search query from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('query');
+        
+        // DOM Elements
+        const searchQueryDisplay = document.getElementById('searchQueryDisplay');
+        const resultsCount = document.getElementById('resultsCount');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        // API Configuration
+        const API_BASE_URL = 'https://api.jikan.moe/v4';
+        
+        // Display search query
+        if (query) {
+            searchQueryDisplay.textContent = `"${query}"`;
+            searchInput.value = query;
+            fetchSearchResults(query);
+        } else {
+            showNoResults();
+        }
+        
+        // Fetch search results
+        async function fetchSearchResults(query) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/anime?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    displayResults(data.data);
+                } else {
+                    showNoResults();
+                }
+            } catch (error) {
+                console.error('Error searching anime:', error);
+                showNoResults();
+            }
+        }
+        
+        // Display results
+        function displayResults(animeList) {
+            resultsCount.textContent = `${animeList.length} results found`;
+            
+            animeList.forEach((anime, index) => {
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                resultCard.style.animationDelay = `${(index % 10) * 0.1}s`;
+                
+                const title = anime.title_english || anime.title || 'Unknown Title';
+                const imageUrl = anime.images?.jpg?.image_url || 'https://via.placeholder.com/300x450/333/fff?text=No+Image';
+                const score = anime.score ? anime.score.toFixed(1) : 'N/A';
+                const type = anime.type || 'Unknown';
+                const episodes = anime.episodes || '?';
+                const status = anime.status || 'Unknown';
+                const synopsis = anime.synopsis || 'No synopsis available.';
+                const genres = anime.genres?.map(g => g.name) || [];
+                const year = anime.year || (anime.aired?.prop?.from?.year || '');
+                
+                resultCard.innerHTML = `
+                    <img src="${imageUrl}" alt="${title}">
+                    <div class="anime-info">
+                        <h3>${title}</h3>
+                        <p>${type} • ⭐ ${score}</p>
+                    </div>
+                    <div class="anime-details">
+                        <h3 class="detail-title">${title}</h3>
+                        <p class="detail-text">${year} • ${status} • ${episodes} eps</p>
+                        <div class="detail-genres">
+                            ${genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                        </div>
+                        <p class="detail-text">${synopsis}</p>
+                    </div>
+                    <a href="#" class="btn btn-primary watch-now-btn">Watch Now</a>
+                `;
+                
+                // Add click event listener to the card
+                resultCard.addEventListener('click', () => {
+                    document.body.classList.add('page-transition');
+                    setTimeout(() => {
+                        window.location.href = `anime.html?id=${anime.mal_id}`;
+                    }, 500);
+                });
+                
+                resultsGrid.appendChild(resultCard);
+            });
+        }
+        
+        function showNoResults() {
+            resultsGrid.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h3>No results found</h3>
+                    <p>Try a different search term</p>
+                    <a href="similar.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Handle new searches
+        function handleSearch(query) {
+            if (query.length < 3) return;
+            window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+        }
+        
+        // Event listeners
+        searchBtn.addEventListener('click', () => handleSearch(searchInput.value));
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch(searchInput.value);
+        });
+
+    </script>
+</body>
+</html>
