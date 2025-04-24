@@ -226,8 +226,12 @@
             <div class="spinner"></div>
         </div>
     </div>
-
+    <div id="authWarning" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: #ff3e6c; color: white; padding: 15px; text-align: center; z-index: 1000;">
+        Please login to access watch functionality. <a href="login.html" style="color: white; text-decoration: underline;">Login here</a>
+    </div>
     <script>
+        const authToken = localStorage.getItem('authToken');
+        const authWarning = document.getElementById('authWarning');
         // YouTube API Key (replace with your actual API key)
         const YOUTUBE_API_KEY = 'AIzaSyBltNkhqoteU8APMqVxmZIdAoz1SUF-Pe0';
         
@@ -311,8 +315,8 @@
             // Estimate seasons (12 episodes per season)
             const totalEpisodes = animeDetails.episodes || 12;
             const seasonsCount = Math.ceil(totalEpisodes / 12);
-            
-            watchContainer.innerHTML = `
+            if(authToken){
+                watchContainer.innerHTML = `
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1" 
                             frameborder="0" 
@@ -350,6 +354,11 @@
                     <p class="episode-description">Loading episode description...</p>
                 </div>
             `;
+            }
+            else if(!authToken){
+                authWarning.style.display = 'none';
+            }
+
             
             // Initialize dropdown functionality
             initDropdowns();
