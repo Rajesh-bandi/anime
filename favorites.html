@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites | AniFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .favorites-container {
+            padding: 6rem 5% 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .favorites-header {
+            margin-bottom: 2rem;
+        }
+        
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .empty-favorites {
+            text-align: center;
+            padding: 5rem 0;
+        }
+        
+        .empty-favorites i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">AniFlix</div>
+        <div class="nav-links">
+            <a href="similar.html">Home</a>
+            <a href="#">Genres</a>
+            <a href="#">New Releases</a>
+            <a href="favorites.html" class="active">My Favorites</a>
+            <a href="#">Ongoing</a>
+            <a href="#">Recent</a>
+        </div>
+        <div class="profile-dropdown">
+            <div class="profile-element" style="display: none;">
+              <i class="fas fa-user-circle"></i>
+              <span class="username"></span>
+              <div class="dropdown-menu">
+                <a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a>
+                <a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+              </div>
+            </div>
+            <a href="login.html" class="login-link">Login</a>
+          </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search anime..." id="searchInput">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+    </nav>
+
+    <div class="favorites-container">
+        <div class="favorites-header">
+            <h1 class="section-title">My Favorites</h1>
+            <p>All your saved anime in one place</p>
+        </div>
+        
+        <div class="favorites-grid" id="favoritesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="favorites.js"></script>
+</body>
+</html>
