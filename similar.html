@@ -23,6 +23,18 @@
             <input type="text" placeholder="Search anime..." id="searchInput">
             <button id="searchBtn"><i class="fas fa-search"></i></button>
         </div>
+        <div class="profile-dropdown">
+            <div class="profile-element" style="display: none;">
+                <i class="fas fa-user-circle"></i>
+                <span class="username"></span>
+                <div class="dropdown-menu">
+                    <a href="#"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#"><i class="fas fa-heart"></i> Favorites</a>
+                    <a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+            <a href="login.html" class="login-link">Login</a>
+        </div>
     </nav>
 
     <section class="hero">
@@ -183,6 +195,18 @@
             fetchAnimeData('/top/anime?filter=upcoming', newReleases);
             fetchAnimeData('/seasons/now', ongoingAnime);
         });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.logout-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    });
+});
     </script>
+    <script src="api.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>
